@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Murali Krishna Rice Mill - Payment Calculator</title>
+<title>Murali Krishna Rice Mill</title>
 
 <style>
   body {
@@ -11,12 +11,11 @@
     padding: 20px;
   }
   .container {
-    max-width: 450px;
+    max-width: 500px;
     background: white;
     padding: 20px;
     margin: auto;
     border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
   }
   input, button {
     width: 100%;
@@ -34,100 +33,99 @@
     font-weight: bold;
     color: green;
   }
-  .print-btn {
-    background: #007bff;
-    color: white;
-    border: none;
-    cursor: pointer;
-  }
-  .header {
-    text-align: center;
-    font-size: 22px;
-    font-weight: bold;
-    margin-bottom: 10px;
-  }
 </style>
 
 </head>
 <body>
 
 <div class="container">
-  <div class="header">Murali Krishna Rice Mill</div>
+  <h2 style="text-align:center;">Murali Krishna Rice Mill</h2>
 
-  <h3>Farmer Payment Calculator</h3>
+  <label>Farmer Name / రైతు పేరు</label>
+  <input type="text" id="farmer">
 
-  <label>Net Weight (kg)</label>
+  <label>Vehicle Number / వాహన నంబర్</label>
+  <input type="text" id="vehicle">
+
+  <label>Weighbridge Number / తూకం రశీదు నంబర్</label>
+  <input type="text" id="wbnum">
+
+  <label>Date / తేదీ</label>
+  <input type="date" id="date">
+
+  <label>Net Weight (kg) / నికర బరువు</label>
   <input type="number" id="weight">
 
-  <label>Number of Bags</label>
+  <label>Bags / సంచులు</label>
   <input type="number" id="bags">
 
-  <label>Rate (₹ per quintal)</label>
+  <label>Rate (₹ per quintal) / రేట్</label>
   <input type="number" id="rate" value="2350">
 
-  <label>Hamali per bag (₹)</label>
-  <input type="number" id="hamali" value="20">
-
-  <label>Weighbridge Charge (₹)</label>
-  <input type="number" id="wb" value="50">
-
-  <label>Cash Cutting (%)</label>
-  <input type="number" id="cut" value="1">
-
   <button onclick="calculate()">Calculate</button>
-  <button onclick="resetForm()">Reset</button>
-  <button class="print-btn" onclick="downloadSlip()">Download / Print Slip</button>
+  <button onclick="downloadSlip()">Download / Print</button>
 
   <div class="result" id="output"></div>
 </div>
 
 <script>
+document.getElementById("date").valueAsDate = new Date();
+
 let slipHTML = "";
 
 function calculate() {
+  let farmer = document.getElementById("farmer").value;
+  let vehicle = document.getElementById("vehicle").value;
+  let wbnum = document.getElementById("wbnum").value;
+  let date = document.getElementById("date").value;
+
   let weight = parseFloat(document.getElementById("weight").value);
   let bags = parseInt(document.getElementById("bags").value);
   let rate = parseFloat(document.getElementById("rate").value);
-  let hamaliRate = parseFloat(document.getElementById("hamali").value);
-  let wb = parseFloat(document.getElementById("wb").value);
-  let cutPercent = parseFloat(document.getElementById("cut").value);
-
-  if (!weight || weight <= 0 || bags < 0 || !rate) {
-    alert("Enter valid values");
-    return;
-  }
 
   let bagCut = bags * 2;
   let adjustedWeight = weight - bagCut;
   let quintals = adjustedWeight / 100;
   let total = quintals * rate;
 
-  let hamali = bags * hamaliRate;
-  let costCut = total * (cutPercent / 100);
+  let hamali = bags * 20;
+  let wb = 50;
+  let costCut = total * 0.01;
   let totalDeductions = hamali + wb + costCut;
   let final = total - totalDeductions;
 
   slipHTML = `
     <h2 style="text-align:center;">Murali Krishna Rice Mill</h2>
     <hr>
-    <p>Net Weight: ${weight} kg</p>
-    <p>Bags: ${bags}</p>
-    <p>Bag Cutting: ${bagCut} kg</p>
-    <p><strong>Adjusted Weight: ${adjustedWeight.toFixed(2)} kg</strong></p>
 
-    <p>Quintals: ${quintals.toFixed(2)}</p>
-    <p>Rate: ₹${rate}</p>
-    <p><strong>Gross Amount: ₹${total.toFixed(2)}</strong></p>
+    <p><b>Farmer / రైతు:</b> ${farmer}</p>
+    <p><b>Vehicle / వాహనం:</b> ${vehicle}</p>
+    <p><b>Weighbridge No / తూకం నం:</b> ${wbnum}</p>
+    <p><b>Date / తేదీ:</b> ${date}</p>
 
     <hr>
-    <h3>Cuttings</h3>
-    <p>Hamali: ₹${hamali.toFixed(2)}</p>
-    <p>Weighbridge: ₹${wb.toFixed(2)}</p>
-    <p>Cash Cutting (${cutPercent}%): ₹${costCut.toFixed(2)}</p>
-    <p><strong>Total Deduction: ₹${totalDeductions.toFixed(2)}</strong></p>
+
+    <p>Net Weight / నికర బరువు: ${weight} kg</p>
+    <p>Bags / సంచులు: ${bags}</p>
+    <p>Cutting / కటింగ్: ${bagCut} kg</p>
+    <p><b>Adjusted Weight / సరిచేసిన బరువు: ${adjustedWeight.toFixed(2)} kg</b></p>
+
+    <p>Quintals / క్వింటాళ్లు: ${quintals.toFixed(2)}</p>
+    <p>Rate / రేట్: ₹${rate}</p>
+    <p><b>Total / మొత్తం: ₹${total.toFixed(2)}</b></p>
 
     <hr>
-    <h2 style="color:green;">Final Payment: ₹${final.toFixed(2)}</h2>
+
+    <h3>Cuttings / కోతలు</h3>
+    <p>Hamali / హమాలి: ₹${hamali}</p>
+    <p>Weighbridge / తూకం ఛార్జ్: ₹${wb}</p>
+    <p>Cash Cut (1%) / నగదు కోత: ₹${costCut.toFixed(2)}</p>
+
+    <p><b>Total Deduction / మొత్తం కోత: ₹${totalDeductions.toFixed(2)}</b></p>
+
+    <hr>
+
+    <h2 style="color:green;">Final Payment / చివరి చెల్లింపు: ₹${final.toFixed(2)}</h2>
   `;
 
   document.getElementById("output").innerHTML = slipHTML;
@@ -142,7 +140,6 @@ function downloadSlip() {
   let win = window.open("", "", "width=600,height=700");
   win.document.write(`
     <html>
-    <head><title>Payment Slip</title></head>
     <body>
       ${slipHTML}
       <script>window.print();<\/script>
@@ -150,13 +147,6 @@ function downloadSlip() {
     </html>
   `);
   win.document.close();
-}
-
-function resetForm() {
-  document.getElementById("weight").value = "";
-  document.getElementById("bags").value = "";
-  document.getElementById("output").innerHTML = "";
-  slipHTML = "";
 }
 </script>
 
