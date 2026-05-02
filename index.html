@@ -11,7 +11,7 @@
     padding: 20px;
   }
   .container {
-    max-width: 500px;
+    max-width: 520px;
     background: white;
     padding: 20px;
     margin: auto;
@@ -62,6 +62,15 @@
   <label>Rate (₹ per quintal) / రేట్</label>
   <input type="number" id="rate" value="2350">
 
+  <label>Hamali per bag (₹) / హమాలి (ప్రతి సంచి)</label>
+  <input type="number" id="hamali" value="20">
+
+  <label>Weighbridge Charge (₹) / తూకం ఛార్జ్</label>
+  <input type="number" id="wb" value="50">
+
+  <label>Cash Cutting (%) / నగదు కోత (%)</label>
+  <input type="number" id="cut" value="1">
+
   <button onclick="calculate()">Calculate</button>
   <button onclick="downloadSlip()">Download / Print</button>
 
@@ -82,16 +91,23 @@ function calculate() {
   let weight = parseFloat(document.getElementById("weight").value);
   let bags = parseInt(document.getElementById("bags").value);
   let rate = parseFloat(document.getElementById("rate").value);
+  let hamaliRate = parseFloat(document.getElementById("hamali").value);
+  let wbCharge = parseFloat(document.getElementById("wb").value);
+  let cutPercent = parseFloat(document.getElementById("cut").value);
+
+  if (!farmer || !weight || !rate) {
+    alert("Fill required fields");
+    return;
+  }
 
   let bagCut = bags * 2;
   let adjustedWeight = weight - bagCut;
   let quintals = adjustedWeight / 100;
   let total = quintals * rate;
 
-  let hamali = bags * 20;
-  let wb = 50;
-  let costCut = total * 0.01;
-  let totalDeductions = hamali + wb + costCut;
+  let hamali = bags * hamaliRate;
+  let costCut = total * (cutPercent / 100);
+  let totalDeductions = hamali + wbCharge + costCut;
   let final = total - totalDeductions;
 
   slipHTML = `
@@ -112,14 +128,14 @@ function calculate() {
 
     <p>Quintals / క్వింటాళ్లు: ${quintals.toFixed(2)}</p>
     <p>Rate / రేట్: ₹${rate}</p>
-    <p><b>Total / మొత్తం: ₹${total.toFixed(2)}</b></p>
+    <p><b>Gross Amount / మొత్తం: ₹${total.toFixed(2)}</b></p>
 
     <hr>
 
     <h3>Cuttings / కోతలు</h3>
-    <p>Hamali / హమాలి: ₹${hamali}</p>
-    <p>Weighbridge / తూకం ఛార్జ్: ₹${wb}</p>
-    <p>Cash Cut (1%) / నగదు కోత: ₹${costCut.toFixed(2)}</p>
+    <p>Hamali / హమాలి: ₹${hamali.toFixed(2)}</p>
+    <p>Weighbridge / తూకం ఛార్జ్: ₹${wbCharge.toFixed(2)}</p>
+    <p>Cash Cutting (${cutPercent}%) / నగదు కోత: ₹${costCut.toFixed(2)}</p>
 
     <p><b>Total Deduction / మొత్తం కోత: ₹${totalDeductions.toFixed(2)}</b></p>
 
